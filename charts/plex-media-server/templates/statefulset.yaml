@@ -96,6 +96,9 @@ spec:
         - name: rclone-config
           mountPath: /out
       {{- end }}
+      {{- with .Values.extraInitContainers }}
+{{- toYaml . | nindent 6 }}
+      {{- end }}
       containers:
       - name: {{ include "pms-chart.fullname" . }}-pms
         image: {{ include "pms-chart.image" . }}
@@ -147,6 +150,13 @@ spec:
             {{ toYaml .requests | indent 12 | trim }}
           {{- end }}
         {{- end }}
+        {{- with .Values.pms.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- if .Values.pms.shareProcessNamespace }}
+        shareProcessNamespace: {{ .Values.pms.shareProcessNamespace }}
+      {{- end }}
         volumeMounts:
         - name: pms-config
           mountPath: /config
@@ -206,7 +216,9 @@ spec:
       {{- end }}
   {{- if not .Values.pms.configExistingClaim }}
   volumeClaimTemplates:
-  - metadata:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
       name: pms-config
     spec:
       accessModes: [ "ReadWriteOnce" ]

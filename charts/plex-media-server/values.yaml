@@ -4,7 +4,7 @@ image:
   registry: index.docker.io
   repository: plexinc/pms-docker
   # -- If unset use "latest"
-  tag: "latest"
+  tag: "1.41.5.9522-a96edc606"
   sha: ""
   pullPolicy: IfNotPresent
 
@@ -63,6 +63,12 @@ pms:
   #   cpu: 100m
   #   memory: 128Mi
 
+  # -- Security context for PMS pods
+  securityContext: {}
+
+  # -- Enable process namespace sharing within the pod.
+  shareProcessNamespace: false
+
   # -- Add kubernetes liveness probe to pms container.
   livenessProbe: {}
     # httpGet:
@@ -119,6 +125,22 @@ initContainer:
   #
   #   echo "Done."
 
+extraInitContainers: {}
+# extraContainers:
+#  - name: <container name>
+#    args:
+#      - ...
+#    image: <docker images>
+#    imagePullPolicy: IfNotPresent
+#    resources:
+#      limits:
+#        memory: 128Mi
+#      requests:
+#        cpu: 100m
+#        memory: 128Mi
+#    volumeMounts:
+#      - ...
+
 # -- Specify your own runtime class name eg use gpu
 runtimeClassName: ""
 
@@ -143,7 +165,6 @@ rclone:
   # All keys in configSecret will be available in /etc/rclone/. This might
   # be useful if other files are needed, such as a private key for sftp mode.
   configSecret: ""
-
 
   # -- The remote drive that should be mounted using rclone
   # this must be in the form of `name:[/optional/path]`
@@ -208,7 +229,6 @@ service:
   # -- Optional extra annotations to add to the service resource
   annotations: {}
 
-
 nodeSelector: {}
 
 tolerations: []
@@ -233,7 +253,6 @@ extraEnv: {}
 # a list of CIDRs that can use the server without authentication
   # this is only used for the first startup of PMS
 #   ALLOWED_NETWORKS: "0.0.0.0/0"
-
 
 # -- Optionally specify additional volume mounts for the PMS and init containers.
 extraVolumeMounts: []
